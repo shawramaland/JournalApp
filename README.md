@@ -1,11 +1,6 @@
 # JournalApp
-A simple code that you can write like a personal journal
-This is just a simple project for myself to be better in java thats all.
+I've created a straightforward code resembling a personal journal. It's a personal project aimed at improving my Java skills.
 
-10/9/2023
-Just managed to make the code to run as intended and only write a title and Entry for it like you are writing a personal journal.
-it still need some other stuff to be added however its a good step.
+10/9/2023: I successfully made the code function as intended. It allows the user to write a title and an entry, much like maintaining a personal journal. There are still some additional features that need to be incorporated, but this marks a step forward i think.
 
-11/9/2023
-I added a password user and login security that before entering, it will need to register a password and after that you can login with the new password you just registard,
-however i stumble upon an issue where the main in the util folder is and the MainApp in the directory are rather seperated, so as i just need to combine this toger and will write what would be next.
+11/9/2023: I introduced password-based user login security. Users now need to register a password before gaining access. However, I encountered an issue where the 'Main' in the com/github/shawarmaland folder and 'MainApp' in the directory were somewhat isolated. My next step is to consolidate these components and outline what comes next.
