@@ -16,13 +16,13 @@ public class Main {
                 case 1:
                     System.out.println("Enter password for registration: ");
                     String registerPassword = scanner.nextLine();
-                    UserService.registerUser(registerPassword);
+                    UserService.registerUser();
                     System.out.println("Successfully registered");
                     break;
                 case 2:
                     System.out.println("Enter password for login: ");
                     String loginPassword = scanner.nextLine();
-                    if(UserService.loginUser(loginPassword)) {
+                    if(UserService.loginUser()) {
                         System.out.println("Login successful!");
                     } else {
                         System.out.println("Incorrect password.");
