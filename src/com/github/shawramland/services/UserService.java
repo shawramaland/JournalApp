@@ -4,6 +4,7 @@ import java.util.*;
 public class UserService {
     private static Scanner scanner = new Scanner(System.in);
     private static String storedHashedPassword = "";
+    private static String storedUsername = "";
 
     public static void registerUser() {
         System.out.print("Enter a username: ");
@@ -13,6 +14,7 @@ public class UserService {
         String password = scanner.nextLine();
 
         storedHashedPassword = PasswordService.hashPassword(password);
+        storedUsername = username;
         // here it usually save the username and hashed password to a database or some storage
 
         System.out.println("User registered successfully!");
@@ -24,6 +26,11 @@ public class UserService {
 
         System.out.print("Enter your Password: ");
         String enteredPassword = scanner.nextLine();
+
+        if(!enteredUsername.equals(storedUsername)) {
+            System.out.println("Invalid username or password");
+            return false;
+        }
 
         if(PasswordService.checkPassword(enteredPassword, storedHashedPassword)) {
             System.out.println("Login successful!");

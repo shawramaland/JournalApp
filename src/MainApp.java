@@ -1,7 +1,9 @@
 import com.github.shawramland.services.UserService;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 public class MainApp {
+    private static List<Entry> entries = new ArrayList<>();
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
@@ -54,19 +56,69 @@ public class MainApp {
             switch(choice) {
                 case 1:
                     // Logic to add entry
-                    System.out.println("Adding entry...");
+                    System.out.println("Enter the title of your entry: ");
+                    String title = scanner.nextLine();
+
+                    System.out.println("Enter the content of your entry: ");
+                    String content = scanner.nextLine();
+
+                    Entry newEntry = new Entry(title, content);
+                    entries.add(newEntry);
+
+                    // this will save the entry that was written
+                    System.out.println("Enter added successfully");
                     break;
                 case 2:
-                    // Logic to view entries
-                    System.out.println("Viewing entries...");
+                    // this case will view the entries it was written and added
+                    if(entries.isEmpty()) {
+                        System.out.println("No entries found");
+                    } else {
+                        System.out.println("Your entries:");
+                        for(int i = 0; i < entries.size(); i++) {
+                            System.out.println((i + 1) + ". " + "Title: " + entries.get(i).getTitle());
+                            System.out.println("Content: " + entries.get(i).getContent());
+                            System.out.println("-----------------");
+                        }
+                    }
                     break;
                 case 3:
-                    //logic to edit an entry
-                    System.out.println("Editing an entry...");
+                    // if entry does not exist
+                    if(entries.isEmpty()) {
+                        System.out.println("No entries available to edit.");
+                        break;
+                    }
+                    //It's for editing an entry you have written and added
+                    System.out.println("Which entry do you want to edit? (Enter the index)");
+                    for(int i = 0; i < entries.size(); i++) {
+                        System.out.println((i + 1) + ". " + entries.get(i).getTitle());
+                    }
+                    int editIndex = scanner.nextInt() - 1; // Subtracting 1 because array will start at 0
+                    scanner.nextLine(); // Consume leftover newline
+
+                    System.out.println("Enter the new title: ");
+                    String newTitle = scanner.nextLine();
+
+                    System.out.println("Enter the new content: ");
+                    String newContent = scanner.nextLine();
+
+                    entries.get(editIndex).setTitle(newTitle);
+                    entries.get(editIndex).setContent(newContent);
+                    System.out.println("Entry updated successfully!");
                     break;
                 case 4:
-                    // logic to delete an entry
-                    System.out.println("Deleting an entry...");
+                    // this will delete an entry
+                    System.out.println("Which array would you like to delete? (Enter the index)");
+                    for(int i = 0; i < entries.size(); i++) {
+                        System.out.println((i + 1) + ". " + entries.get(i).getTitle());
+                    }
+                    int deleteIndex = scanner.nextInt() - 1;
+                    scanner.nextLine(); // consumes the leftover newline
+
+                    entries.remove(deleteIndex);
+                    System.out.println("Entry deleted successfully!");
+                    break;
+                case 5:
+                    System.out.println("Exiting journal...");
                     return;
                 default:
                     System.out.println("Invalid choice. Please try again.");

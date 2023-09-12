@@ -20,7 +20,7 @@ public class Entry {
     public void setTitle(String title){
         this.title = title;
     }
-    public void setContent(String Content){
+    public void setContent(String content){
         this.content = content;
     }
 
