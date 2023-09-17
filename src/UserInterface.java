@@ -11,9 +11,9 @@ public class UserInterface {
     }
     public void start() {
         // Sample interaction logic
-        // For brevity, I'm only setting up the "Add Entry" option. You can expand upon this.
+        // For brevity, I'm only setting up the "Add com.github.shawramland.Entry" option. You can expand upon this.
         while(true) {
-            System.out.println("1. Add Entry");
+            System.out.println("1. Add com.github.shawramland.Entry");
             System.out.println("2. Exit");
             System.out.println("Choose an option: ");
             int choice = scanner.nextInt();

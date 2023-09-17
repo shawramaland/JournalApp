@@ -1,3 +1,5 @@
+package com.github.shawramland;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 public class Entry {

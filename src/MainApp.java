@@ -1,4 +1,7 @@
-import com.github.shawramland.services.UserService;
+import com.github.shawramland.Entry;
+import com.github.shawramland.services.DatabaseService;
+
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -6,6 +9,9 @@ public class MainApp {
     private static List<Entry> entries = new ArrayList<>();
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+
+        //Initializing the database
+        DatabaseService.initializeDatabase();
 
         // User Authentication First
         while (true) {
@@ -20,10 +26,10 @@ public class MainApp {
 
             switch (authChoice) {
                 case 1:
-                    UserService.registerUser();
+                    DatabaseService.registerUser();
                     break;
                 case 2:
-                    if (UserService.loginUser()) {
+                    if (DatabaseService.loginUser()) {
                         // directing the user to the Journal functionalities
                         journalMenu(scanner); //This can be the existing MainApp functionality
                     } else {
@@ -62,21 +68,21 @@ public class MainApp {
                     System.out.println("Enter the content of your entry: ");
                     String content = scanner.nextLine();
 
-                    Entry newEntry = new Entry(title, content);
-                    entries.add(newEntry);
+                    DatabaseService.addEntry(1, title, content);
 
                     // this will save the entry that was written
                     System.out.println("Enter added successfully");
                     break;
                 case 2:
                     // this case will view the entries it was written and added
+                    List<Entry> userEntries = DatabaseService.getEntriesForUser(1);
                     if(entries.isEmpty()) {
                         System.out.println("No entries found");
                     } else {
                         System.out.println("Your entries:");
-                        for(int i = 0; i < entries.size(); i++) {
-                            System.out.println((i + 1) + ". " + "Title: " + entries.get(i).getTitle());
-                            System.out.println("Content: " + entries.get(i).getContent());
+                        for(int i = 0; i < userEntries.size(); i++) {
+                            System.out.println((i + 1) + ". " + "Title: " + userEntries.get(i).getTitle());
+                            System.out.println("Content: " + userEntries.get(i).getContent());
                             System.out.println("-----------------");
                         }
                     }
@@ -103,7 +109,7 @@ public class MainApp {
 
                     entries.get(editIndex).setTitle(newTitle);
                     entries.get(editIndex).setContent(newContent);
-                    System.out.println("Entry updated successfully!");
+                    System.out.println("com.github.shawramland.Entry updated successfully!");
                     break;
                 case 4:
                     // this will delete an entry
@@ -115,7 +121,7 @@ public class MainApp {
                     scanner.nextLine(); // consumes the leftover newline
 
                     entries.remove(deleteIndex);
-                    System.out.println("Entry deleted successfully!");
+                    System.out.println("com.github.shawramland.Entry deleted successfully!");
                     break;
                 case 5:
                     System.out.println("Exiting journal...");

@@ -1,3 +1,5 @@
+import com.github.shawramland.Entry;
+
 import java.util.ArrayList;
 import java.util.List;
 public class Journal {
