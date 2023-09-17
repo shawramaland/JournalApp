@@ -75,14 +75,14 @@ public class MainApp {
                     break;
                 case 2:
                     // this case will view the entries it was written and added
-                    List<Entry> userEntries = DatabaseService.getEntriesForUser(1);
+                    entries = DatabaseService.getEntriesForUser(1);
                     if(entries.isEmpty()) {
                         System.out.println("No entries found");
                     } else {
                         System.out.println("Your entries:");
-                        for(int i = 0; i < userEntries.size(); i++) {
-                            System.out.println((i + 1) + ". " + "Title: " + userEntries.get(i).getTitle());
-                            System.out.println("Content: " + userEntries.get(i).getContent());
+                        for(int i = 0; i < entries.size(); i++) {
+                            System.out.println((i + 1) + ". " + "Title: " + entries.get(i).getTitle());
+                            System.out.println("Content: " + entries.get(i).getContent());
                             System.out.println("-----------------");
                         }
                     }
@@ -107,9 +107,16 @@ public class MainApp {
                     System.out.println("Enter the new content: ");
                     String newContent = scanner.nextLine();
 
+                    // this will update in memory list
                     entries.get(editIndex).setTitle(newTitle);
                     entries.get(editIndex).setContent(newContent);
-                    System.out.println("com.github.shawramland.Entry updated successfully!");
+
+                    // this will fetch the ID of the entry to be updated from the database
+                    int entryId = DatabaseService.getEntryIdByTitle(entries.get(editIndex).getTitle());
+                    // Updating the database
+                    DatabaseService.updateEntry(entryId, newTitle, newContent);
+
+                    System.out.println("Entry updated successfully!");
                     break;
                 case 4:
                     // this will delete an entry
@@ -120,8 +127,10 @@ public class MainApp {
                     int deleteIndex = scanner.nextInt() - 1;
                     scanner.nextLine(); // consumes the leftover newline
 
+                    DatabaseService.deleteEntryByTitle(entries.get(deleteIndex).getTitle());
+
                     entries.remove(deleteIndex);
-                    System.out.println("com.github.shawramland.Entry deleted successfully!");
+                    System.out.println("Entry deleted successfully!");
                     break;
                 case 5:
                     System.out.println("Exiting journal...");

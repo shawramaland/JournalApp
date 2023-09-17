@@ -108,7 +108,7 @@ public class DatabaseService {
             while(rs.next()) {
                 String title = rs.getString("title");
                 String content = rs.getString("content");
-                System.out.println("Fetched entry" + title + " - " + content);
+                System.out.println("Fetched entry " + title + " - " + content);
                 String timestamp = rs.getString("timestamp");
                 entries.add(new Entry(title, content));
             }
@@ -141,5 +141,33 @@ public class DatabaseService {
         } catch (SQLException e) {
             System.out.println("Error deleting entry " + e.getMessage());
         }
+    }
+    public static void deleteEntryByTitle(String title) {
+        String sql = "DELETE FROM Entries WHERE title = ?";
+
+        try(Connection conn = DriverManager.getConnection(CONNECTION_STRING);
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, title);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Error deleting entry " + e.getMessage());
+        }
+    }
+
+    public static int getEntryIdByTitle(String title) {
+        String sql = "SELECT id FROM Entries WHERE title = ?";
+
+        try(Connection conn = DriverManager.getConnection(CONNECTION_STRING);
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, title);
+            ResultSet rs = pstmt.executeQuery();
+
+            if(rs.next()) {
+                return rs.getInt("id");
+            }
+        } catch(SQLException e) {
+            System.out.println("Error retrieving entry ID: " + e.getMessage());
+        }
+        return -1;
     }
 }
