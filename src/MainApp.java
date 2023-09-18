@@ -1,7 +1,6 @@
 import com.github.shawramland.Entry;
 import com.github.shawramland.services.DatabaseService;
 
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -34,7 +33,6 @@ public class MainApp {
                         journalMenu(scanner); //This can be the existing MainApp functionality
                     } else {
                         System.out.println("Login failed. Please try again");
-                        return; // Exit the application or loop back to give the user another try
                     }
                     break;
                 case 3:
@@ -107,12 +105,13 @@ public class MainApp {
                     System.out.println("Enter the new content: ");
                     String newContent = scanner.nextLine();
 
+                    // this will fetch the ID of the entry to be updated from the database
+                    int entryId = DatabaseService.getEntryIdByTitle(entries.get(editIndex).getTitle());
+
                     // this will update in memory list
                     entries.get(editIndex).setTitle(newTitle);
                     entries.get(editIndex).setContent(newContent);
 
-                    // this will fetch the ID of the entry to be updated from the database
-                    int entryId = DatabaseService.getEntryIdByTitle(entries.get(editIndex).getTitle());
                     // Updating the database
                     DatabaseService.updateEntry(entryId, newTitle, newContent);
 

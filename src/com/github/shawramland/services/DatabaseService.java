@@ -109,7 +109,6 @@ public class DatabaseService {
                 String title = rs.getString("title");
                 String content = rs.getString("content");
                 System.out.println("Fetched entry " + title + " - " + content);
-                String timestamp = rs.getString("timestamp");
                 entries.add(new Entry(title, content));
             }
         } catch(SQLException e) {
@@ -131,17 +130,7 @@ public class DatabaseService {
             System.out.println("Error updating entry: " + e.getMessage());
         }
     }
-    public static void deleteEntry(int entryId) {
-        String sql = "DELETE FROM Entries WHERE id = ?";
 
-        try(Connection conn = DriverManager.getConnection(CONNECTION_STRING);
-            PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, entryId);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Error deleting entry " + e.getMessage());
-        }
-    }
     public static void deleteEntryByTitle(String title) {
         String sql = "DELETE FROM Entries WHERE title = ?";
 

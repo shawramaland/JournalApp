@@ -3,7 +3,7 @@ package com.github.shawramland;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 public class Entry {
-    private LocalDateTime timestamp;
+    final private LocalDateTime timestamp;
     private String title;
     private String content;
 
