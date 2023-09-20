@@ -8,9 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDateTime;
 
+/**
+ * Service class to handle database operation for the Journal application.
+ * Handles operations like initialization, user registrations, logic before entering and adding entries and such.
+ */
 public class DatabaseService {
-    private static final String CONNECTION_STRING = "jdbc:sqlite:D:/SQlite/journal.db"; // Adjusting the path it was placed
+    private static final String CONNECTION_STRING = "jdbc:sqlite:D:/SQlite/journal.db"; // AConnection string for the SQLite database
 
+    /**
+     * Initializes the database by setting up the necessary tables.
+     * Tables include: Users and Entries
+     */
     public static void initializeDatabase() {
         try (Connection conn = DriverManager.getConnection(CONNECTION_STRING);
             Statement stmt = conn.createStatement()) {

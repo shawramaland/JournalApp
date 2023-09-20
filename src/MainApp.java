@@ -4,8 +4,19 @@ import com.github.shawramland.services.DatabaseService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
+/**
+ * Main application for the Journal.
+ * Handles user authentication and provides a menu-driven interface to interact with the journal
+ */
 public class MainApp {
-    private static List<Entry> entries = new ArrayList<>();
+    private static List<Entry> entries = new ArrayList<>(); // List of all entries in the user's journal
+
+    /**
+     * Entry point of the Journal application
+     * Provides user authentication options like Register, Login and Exit
+     * @param args Command-line arguments.
+     */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
@@ -44,6 +55,11 @@ public class MainApp {
         }
     }
 
+    /**
+     * Provides a menu-driven interface for the user to interact with their journal
+     * Options include adding, Viewing, Editing, Deleting of the Entry and exit.
+     * @param scanner Scanner object for user input.
+     */
     private static void journalMenu(Scanner scanner) {
         while(true) {
             System.out.println("\nJournal Menu:");
@@ -70,6 +86,7 @@ public class MainApp {
 
                     // this will save the entry that was written
                     System.out.println("Enter added successfully");
+                    // End of case 1
                     break;
                 case 2:
                     // this case will view the entries it was written and added
@@ -84,11 +101,13 @@ public class MainApp {
                             System.out.println("-----------------");
                         }
                     }
+                    // End of case 2
                     break;
                 case 3:
                     // if entry does not exist
                     if(entries.isEmpty()) {
                         System.out.println("No entries available to edit.");
+                        // End of case 3
                         break;
                     }
                     //It's for editing an entry you have written and added
