@@ -61,7 +61,7 @@ public class MainApp {
      * @param scanner Scanner object for user input.
      */
     private static void journalMenu(Scanner scanner) {
-        while(true) {
+        journalMenuLoop: while(true) {
             System.out.println("\nJournal Menu:");
             System.out.println("1. Add Entry");
             System.out.println("2. View Entries");
@@ -90,18 +90,65 @@ public class MainApp {
                     break;
                 case 2:
                     // this case will view the entries it was written and added
-                    entries = DatabaseService.getEntriesForUser(1);
-                    if(entries.isEmpty()) {
-                        System.out.println("No entries found");
-                    } else {
-                        System.out.println("Your entries:");
+                    int currentPage = 1;
+                    int limit = 10;
+                    while(true) {
+                        int offset = (currentPage - 1) * limit; // Calculates offset based on current page and limit
+                        entries = DatabaseService.getEntriesForUser(1, limit, offset);
+
+                        if(entries.isEmpty()) {
+                            System.out.println("No entries found for this page.");
+                            if(currentPage > 1) {
+                                System.out.println("Returning to previous page.");
+                                currentPage--;
+                                continue;
+                            } else {
+                                break;
+                            }
+                        }
+                        System.out.println("Page " + currentPage + ":");
                         for(int i = 0; i < entries.size(); i++) {
                             System.out.println((i + 1) + ". " + "Title: " + entries.get(i).getTitle());
                             System.out.println("Content: " + entries.get(i).getContent());
-                            System.out.println("-----------------");
+                            System.out.println("------------------");
+                        }
+                        System.out.println("\nOptions:");
+                        System.out.println("1. Next Page");
+                        System.out.println("2. Previous Page");
+                        System.out.println("3. Jump to a Page");
+                        System.out.println("4. Exit");
+                        System.out.println("Enter your choice: ");
+
+                        int userResponse = scanner.nextInt();
+                        scanner.nextLine();
+
+                        switch(userResponse) {
+                            case 1: // next Page
+                                currentPage++;
+                                break;
+                            case 2: // Previous Page
+                                if(currentPage > 1) {
+                                    currentPage--;
+                                } else {
+                                    System.out.println("You're already on the first page");
+                                }
+                                break;
+                            case 3: // Jump to a Page
+                                System.out.println("Enter the page Number:");
+                                int pageToJump = scanner.nextInt();
+                                scanner.nextLine();
+                                if(pageToJump < 1) {
+                                    System.out.println("Invalid page number.");
+                                } else {
+                                    currentPage = pageToJump;
+                                }
+                                break;
+                            case 4: // Exit
+                                continue journalMenuLoop;
+                            default:
+                                System.out.println("Invalid choice.");
                         }
                     }
-                    // End of case 2
                     break;
                 case 3:
                     // if entry does not exist

@@ -102,13 +102,15 @@ public class DatabaseService {
         }
     }
 
-    public static List<Entry> getEntriesForUser(int userId) {
+    public static List<Entry> getEntriesForUser(int userId, int limit, int offset) {
         List<Entry> entries = new ArrayList<>();
-        String sql = "SELECT title, content, timestamp FROM Entries WHERE userID = ?";
+        String sql = "SELECT title, content, timestamp FROM Entries WHERE userID = ? LIMIT ? OFFSET ?";
 
         try(Connection conn = DriverManager.getConnection(CONNECTION_STRING);
             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, userId);
+            pstmt.setInt(2, limit);
+            pstmt.setInt(3, offset);
             ResultSet rs = pstmt.executeQuery();
 
             System.out.println("Fetching entries for user");
