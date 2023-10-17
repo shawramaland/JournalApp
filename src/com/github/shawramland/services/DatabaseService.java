@@ -87,7 +87,7 @@ public class DatabaseService {
         return false;
     }
 
-    public static void addEntry(int userId, String title, String content) {
+    public static boolean addEntry(int userId, String title, String content) {
         String sql = "INSERT INTO Entries(userId, title, content, timestamp) VALUES(?,?,?,?)";
 
         try(Connection conn = DriverManager.getConnection(CONNECTION_STRING);
@@ -97,8 +97,10 @@ public class DatabaseService {
             pstmt.setString(3, content);
             pstmt.setString(4, LocalDateTime.now().toString());
             pstmt.executeUpdate();
+            return true;
         } catch (SQLException e) {
             System.out.println("Error adding entry: " + e.getMessage());
+            return false;
         }
     }
 

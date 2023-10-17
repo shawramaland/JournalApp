@@ -20,12 +20,25 @@ public class MainWindow extends Application {
         //File Menu
         Menu fileMenu = new Menu("File");
         MenuItem newEntryMenuItem = new MenuItem("New Entry");
+        newEntryMenuItem.setOnAction(e -> NewEntryWindow.display());
+
         MenuItem saveMenuItem = new MenuItem("Save");
+        saveMenuItem.setOnAction(e -> saveEntry());
+
         MenuItem exitMenuItem = new MenuItem("Exit");
+        exitMenuItem.setOnAction(e -> System.exit(0));
+
         fileMenu.getItems().addAll(newEntryMenuItem, saveMenuItem, exitMenuItem);
 
         // Edit Menu
         Menu editMenu = new Menu("Edit");
+        MenuItem editEntryMenuItem = new MenuItem("Edit Entry");
+        editEntryMenuItem.setOnAction(e -> editEntry());
+
+        MenuItem deleteMenuItem = new MenuItem("Delete Entry");
+        deleteMenuItem.setOnAction(e -> deleteEntry());
+
+        editMenu.getItems().addAll(editEntryMenuItem, deleteMenuItem);
         // Add items to edit menu as needed
 
         // Help Menu
@@ -41,6 +54,22 @@ public class MainWindow extends Application {
         primaryStage.setTitle("Journey Journal");
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    private void createNewEntry() {
+        System.out.println("Creating a new Entry...");
+    }
+
+    private void saveEntry() {
+        System.out.println("Saving the entry...");
+    }
+
+    private void editEntry() {
+        System.out.println("Editing the entry...");
+    }
+
+    private void deleteEntry() {
+        System.out.println("Deleting an entry...");
     }
 
     public static void main(String[] args) {
