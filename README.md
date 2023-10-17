@@ -12,3 +12,5 @@ I've created a straightforward code resembling a personal journal. It's a person
 18/9/2023: I've successfully resolved the problem related to updating an Entry for the journal project. Following this, I conducted a review of the codebase and identified some files that were no longer in use. As a result, I now have fewer files than before after this cleanup.
 
 26/9/2023: Implemented a pagination system for viewing journal entries, enhancing the user experience by allowing them to navigate through entries page by page. Also refined the navigation flow by ensuring users return to the journal menu after exiting the pagination view.
+
+30/9/2023: Initiated the development of the GUI using JavaFX. Successfully launched the basic GUI window, displaying menu options like 'File', which includes 'New Entry', 'Save', and 'Exit'. Current GUI is preliminary and displays a blank canvas. Future enhancements will focus on integrating existing functionalities and improving the interface.
