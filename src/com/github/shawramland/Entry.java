@@ -2,13 +2,14 @@ package com.github.shawramland;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
 public class Entry {
     final private LocalDateTime timestamp;
     private String title;
     private String content;
 
-    public Entry(String title, String content) {
-        this.timestamp = LocalDateTime.now();
+    public Entry(String title, String content, String timestamp) {
+        this.timestamp = LocalDateTime.parse(timestamp);
         this.title = title;
         this.content = content;
     }
@@ -18,6 +19,10 @@ public class Entry {
     }
     public String getContent() {
         return content;
+    }
+    public String getTimeStamp() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return timestamp.format(formatter);
     }
     public void setTitle(String title){
         this.title = title;

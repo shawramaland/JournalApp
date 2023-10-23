@@ -1,10 +1,12 @@
 package com.github.shawramland.gui;
 
+import com.github.shawramland.services.DatabaseService;
+import com.github.shawramland.Entry;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
+import java.util.List;
+
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -12,7 +14,32 @@ public class MainWindow extends Application {
     @Override
     public void start(Stage primaryStage) {
         // Main layout pane
+        DatabaseService.initializeDatabase();
         BorderPane rootLayout = new BorderPane();
+
+        TextArea textArea = new TextArea();
+        textArea.setEditable(false);
+
+        // Creating ListView to display Entries
+        MainWindow.entryListView = new ListView<>();
+        List<String> entryTitles = DatabaseService.getEntryTitles();
+        entryListView.getItems().addAll(entryTitles);
+
+        entryListView.setOnMouseClicked(e -> {
+            String selectedEntryTitle = entryListView.getSelectionModel().getSelectedItem();
+            Entry selectedEntry = DatabaseService.getEntryDetails(selectedEntryTitle);
+
+            if(selectedEntry != null) {
+                textArea.setText("Title" + selectedEntry.getTitle() + "\n\n"
+                                 + "Content: " + selectedEntry.getContent() + "\n\n"
+                                 + "Timestamp: " + selectedEntry.getTimeStamp());
+            }
+        });
+
+        SplitPane splitPane = new SplitPane();
+        splitPane.getItems().addAll(entryListView, textArea);
+
+        rootLayout.setCenter(splitPane);
 
         // Menu Bar
         MenuBar menuBar = new MenuBar();
@@ -54,6 +81,18 @@ public class MainWindow extends Application {
         primaryStage.setTitle("Journey Journal");
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    public static ListView<String> entryListView = new ListView<>();
+
+    public static void refreshListView() {
+        entryListView.getItems().clear();
+        List<String> entryTitles = DatabaseService.getEntryTitles();
+        entryListView.getItems().addAll(entryTitles);
+    }
+
+    public void addNewEntry() {
+        MainWindow.refreshListView();
     }
 
     private void createNewEntry() {

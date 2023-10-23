@@ -57,6 +57,7 @@ public class NewEntryWindow {
 
         if(isSaved) {
             System.out.println("Entry Saved Successfully.");
+            MainWindow.refreshListView();
         } else {
             System.out.println("An error occurred while saving the entry.");
         }

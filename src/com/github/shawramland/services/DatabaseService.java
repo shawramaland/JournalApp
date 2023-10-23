@@ -120,13 +120,50 @@ public class DatabaseService {
             while(rs.next()) {
                 String title = rs.getString("title");
                 String content = rs.getString("content");
+                String timestamp = rs.getString("timestamp");
                 System.out.println("Fetched entry " + title + " - " + content);
-                entries.add(new Entry(title, content));
+                entries.add(new Entry(title, content, timestamp));
             }
         } catch(SQLException e) {
             System.out.println("Error retrieving entries: " + e.getMessage());
         }
         return entries;
+    }
+
+    public static List<String> getEntryTitles() {
+        List<String> titles = new ArrayList<>();
+        String sql = "SELECT title FROM Entries";
+
+        try (Connection conn = DriverManager.getConnection(CONNECTION_STRING);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                titles.add(rs.getString("title"));
+            }
+        } catch(SQLException e) {
+            System.out.println("Error getting entry titles: " + e.getMessage());
+        }
+        return titles;
+    }
+
+    public static Entry getEntryDetails(String title) {
+        String sql = "SELECT title, content, timestamp FROM Entries WHERE title = ?";
+
+        try (Connection conn = DriverManager.getConnection(CONNECTION_STRING);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, title);
+            ResultSet rs = pstmt.executeQuery();
+
+            if(rs.next()) {
+                String entryTitle = rs.getString("title");
+                String content = rs.getString("content");
+                String timestamp = rs.getString("timestamp");
+                return new Entry(entryTitle, content, timestamp);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving entry details: " + e.getMessage());
+        }
+        return null;
     }
 
     public static void updateEntry(int entryId, String newTitle, String newContent) {
