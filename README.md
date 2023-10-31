@@ -21,3 +21,5 @@ I've created a straightforward code resembling a personal journal. It's a person
 
 30/10/2023: Engaged in enhancing the journal application, focusing on troubleshooting and error resolution. Addressed crucial errors and exceptions to improve database interactions and user experience by making essential adjustments and refinements in method invocations and object initializations.
 
+31/10/2023: Continued optimization efforts, primarily troubleshooting database interaction errors. Adjusted database queries and object creation processes, enhancing the application's robustness and user experience by ensuring successful database interactions and manipulations.
+
