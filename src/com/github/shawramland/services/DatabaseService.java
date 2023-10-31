@@ -118,11 +118,12 @@ public class DatabaseService {
             System.out.println("Fetching entries for user");
 
             while(rs.next()) {
+                int id = rs.getInt("id");
                 String title = rs.getString("title");
                 String content = rs.getString("content");
                 String timestamp = rs.getString("timestamp");
                 System.out.println("Fetched entry " + title + " - " + content);
-                entries.add(new Entry(title, content, timestamp));
+                entries.add(new Entry(id,title, content, timestamp));
             }
         } catch(SQLException e) {
             System.out.println("Error retrieving entries: " + e.getMessage());
@@ -147,7 +148,7 @@ public class DatabaseService {
     }
 
     public static Entry getEntryDetails(String title) {
-        String sql = "SELECT title, content, timestamp FROM Entries WHERE title = ?";
+        String sql = "SELECT id, title, content, timestamp FROM Entries WHERE title = ?";
 
         try (Connection conn = DriverManager.getConnection(CONNECTION_STRING);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -155,10 +156,13 @@ public class DatabaseService {
             ResultSet rs = pstmt.executeQuery();
 
             if(rs.next()) {
+                int id = rs.getInt("id");
                 String entryTitle = rs.getString("title");
                 String content = rs.getString("content");
                 String timestamp = rs.getString("timestamp");
-                return new Entry(entryTitle, content, timestamp);
+                Entry entry = new Entry(id, entryTitle, content, timestamp);
+                entry.setId(id);
+                return entry;
             }
         } catch (SQLException e) {
             System.out.println("Error retrieving entry details: " + e.getMessage());

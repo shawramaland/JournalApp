@@ -47,7 +47,7 @@ public class MainWindow extends Application {
         //File Menu
         Menu fileMenu = new Menu("File");
         MenuItem newEntryMenuItem = new MenuItem("New Entry");
-        newEntryMenuItem.setOnAction(e -> NewEntryWindow.display());
+        newEntryMenuItem.setOnAction(e -> NewEntryWindow.display(null));
 
         MenuItem saveMenuItem = new MenuItem("Save");
         saveMenuItem.setOnAction(e -> saveEntry());
@@ -78,6 +78,10 @@ public class MainWindow extends Application {
 
         // Set scene and stage
         Scene scene = new Scene(rootLayout, 800, 600);
+
+        String css = MainWindow.class.getResource("styles.css").toExternalForm();
+        scene.getStylesheets().add(css);
+
         primaryStage.setTitle("Journey Journal");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -104,11 +108,19 @@ public class MainWindow extends Application {
     }
 
     private void editEntry() {
-        System.out.println("Editing the entry...");
+        String selectedTitle = entryListView.getSelectionModel().getSelectedItem();
+        if(selectedTitle != null) {
+            Entry selectedEntry = DatabaseService.getEntryDetails(selectedTitle);
+            NewEntryWindow.display(selectedEntry);
+        }
     }
 
     private void deleteEntry() {
-        System.out.println("Deleting an entry...");
+        String selectedTitle = entryListView.getSelectionModel().getSelectedItem();
+        if(selectedTitle != null) {
+            DatabaseService.deleteEntryByTitle(selectedTitle);
+            refreshListView();
+        }
     }
 
     public static void main(String[] args) {
