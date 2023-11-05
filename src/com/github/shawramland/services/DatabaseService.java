@@ -212,4 +212,22 @@ public class DatabaseService {
         }
         return -1;
     }
+
+    public static List<String> searchEntryTitles(String searchText) {
+        List<String> searchResults = new ArrayList<>();
+        String sql = "SELECT title FROM Entries WHERE title LIKE ?";
+
+        try(Connection conn = DriverManager.getConnection(CONNECTION_STRING);
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, "%" + searchText + "%");
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                searchResults.add(rs.getString("title"));
+            }
+        } catch(SQLException e) {
+            System.out.println("Error searching entries: " + e.getMessage());
+        }
+        return searchResults;
+    }
 }

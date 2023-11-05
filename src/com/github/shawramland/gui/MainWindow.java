@@ -5,12 +5,19 @@ import com.github.shawramland.Entry;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import java.util.List;
+import javafx.geometry.Insets;
 
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import javafx.scene.input.KeyCode;
 
 public class MainWindow extends Application {
+
+    public static ListView<String> entryListView = new ListView<>();
+    private final TextField searchField = new TextField();
     @Override
     public void start(Stage primaryStage) {
         // Main layout pane
@@ -76,6 +83,20 @@ public class MainWindow extends Application {
 
         rootLayout.setTop(menuBar);
 
+        // Search bar setup
+        searchField.setPromptText("Search entries...");
+        searchField.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.ENTER) {
+                performSearch();
+            }
+        });
+
+        HBox searchBox = new HBox(searchField);
+        searchBox.setPadding(new Insets(10, 10, 10, 10));
+
+        VBox topContainer = new VBox(menuBar, searchBox);
+        rootLayout.setTop(topContainer);
+
         // Set scene and stage
         Scene scene = new Scene(rootLayout, 800, 600);
 
@@ -87,20 +108,10 @@ public class MainWindow extends Application {
         primaryStage.show();
     }
 
-    public static ListView<String> entryListView = new ListView<>();
-
     public static void refreshListView() {
         entryListView.getItems().clear();
         List<String> entryTitles = DatabaseService.getEntryTitles();
         entryListView.getItems().addAll(entryTitles);
-    }
-
-    public void addNewEntry() {
-        MainWindow.refreshListView();
-    }
-
-    private void createNewEntry() {
-        System.out.println("Creating a new Entry...");
     }
 
     private void saveEntry() {
@@ -121,6 +132,12 @@ public class MainWindow extends Application {
             DatabaseService.deleteEntryByTitle(selectedTitle);
             refreshListView();
         }
+    }
+
+    private void performSearch() {
+        String searchText = searchField.getText();
+        List<String> searchResults = DatabaseService.searchEntryTitles(searchText);
+        entryListView.getItems().setAll(searchResults);
     }
 
     public static void main(String[] args) {
