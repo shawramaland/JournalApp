@@ -1,6 +1,12 @@
 package com.github.shawramland.services;
 import com.github.shawramland.Entry;
 import com.github.shawramland.utils.PasswordService;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.IOException;
 
 import java.sql.*;
 import java.util.Scanner;
@@ -229,5 +235,51 @@ public class DatabaseService {
             System.out.println("Error searching entries: " + e.getMessage());
         }
         return searchResults;
+    }
+
+    public static List<Entry> getEntries() {
+        List<Entry> entries = new ArrayList<>();
+        String sql = "SELECT * FROM Entries";
+
+        try (Connection conn = DriverManager.getConnection(CONNECTION_STRING);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                entries.add(new Entry(rs.getInt("id"), rs.getString("title"), rs.getString("content"), rs.getString("timestamp")));
+            }
+        } catch(SQLException e) {
+            System.out.println("Error getting entries: " + e.getMessage());
+        }
+        return entries;
+    }
+
+    public static void saveImportedEntries(List<Entry> importedEntries) {
+        String sql = "INSERT INTO Entries(title, content, timestamp) VALUES(?,?,?)";
+
+        try(Connection conn = DriverManager.getConnection(CONNECTION_STRING);
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            for(Entry entry : importedEntries) {
+                pstmt.setString(1, entry.getTitle());
+                pstmt.setString(2, entry.getContent());
+                pstmt.setString(3, entry.getTimeStamp());
+                pstmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            System.out.println("Error saving imported entries: " + e.getMessage());
+        }
+    }
+
+    public static void exportEntriesToFile(File file) throws IOException {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
+            List<Entry> entriesToExport = getEntries();
+            out.writeObject(entriesToExport);
+        }
+    }
+
+    public static void importEntriesFromFile(File file) throws IOException, ClassNotFoundException {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
+            List<Entry> importEntries = (List<Entry>) in.readObject();
+            saveImportedEntries(importEntries);
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.github.shawramland.services.DatabaseService;
 import com.github.shawramland.Entry;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.stage.FileChooser;
 import java.util.List;
 import javafx.geometry.Insets;
 
@@ -13,6 +14,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.scene.input.KeyCode;
+import java.io.File;
+import java.io.IOException;
 
 public class MainWindow extends Application {
 
@@ -79,6 +82,18 @@ public class MainWindow extends Application {
         Menu helpMenu = new Menu("Help");
         //Add items to help menu as needed
 
+        // Export and Import menu
+
+        MenuItem exportMenuItem = new MenuItem("Export Entries");
+        exportMenuItem.setOnAction(e -> exportEntries(primaryStage));
+
+        MenuItem importMenuItem = new MenuItem("Import Entries");
+        importMenuItem.setOnAction(e -> importEntries(primaryStage));
+
+        fileMenu.getItems().addAll(exportMenuItem, importMenuItem);
+
+        menuBar.getMenus().add(fileMenu);
+
         menuBar.getMenus().addAll(fileMenu, editMenu, helpMenu);
 
         rootLayout.setTop(menuBar);
@@ -138,6 +153,42 @@ public class MainWindow extends Application {
         String searchText = searchField.getText();
         List<String> searchResults = DatabaseService.searchEntryTitles(searchText);
         entryListView.getItems().setAll(searchResults);
+    }
+
+    private void exportEntries(Stage primaryStage) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Export Entries");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Journal files", "*.journal"));
+        File file = fileChooser.showSaveDialog(primaryStage);
+        if(file != null) {
+            try {
+                DatabaseService.exportEntriesToFile(file);
+            } catch (IOException e) {
+                showAlert("Export Failed", "Could not export entries: " + e.getMessage(), Alert.AlertType.ERROR);
+            }
+        }
+    }
+
+    private void importEntries(Stage primaryStage) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Import Entries");
+        File file = fileChooser.showOpenDialog(primaryStage);
+        if(file != null) {
+            try {
+                DatabaseService.importEntriesFromFile(file);
+                refreshListView();
+            } catch (IOException | ClassNotFoundException e) {
+                showAlert("Import Failed", "Could not import entries: " + e.getMessage(), Alert.AlertType.ERROR);
+            }
+        }
+    }
+
+    private void showAlert(String title, String content, Alert.AlertType alertType) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
     public static void main(String[] args) {
