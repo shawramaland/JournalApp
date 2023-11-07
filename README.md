@@ -23,3 +23,5 @@ I've created a straightforward code resembling a personal journal. It's a person
 
 31/10/2023: Continued optimization efforts, primarily troubleshooting database interaction errors. Adjusted database queries and object creation processes, enhancing the application's robustness and user experience by ensuring successful database interactions and manipulations.
 
+5/11/2023: Progressed further in refining the edit functionality. Now, selecting an entry to edit brings up a window pre-filled with the entry's existing content and title, streamlining the editing process. Furthermore, I implemented a search feature that allows for quick retrieval of entries through a search bar, enhancing navigation and accessibility.
+
