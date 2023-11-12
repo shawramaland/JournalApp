@@ -62,10 +62,19 @@ public class MainWindow extends Application {
         MenuItem saveMenuItem = new MenuItem("Save");
         saveMenuItem.setOnAction(e -> saveEntry());
 
+        // Export and Import menu
+
+        MenuItem exportMenuItem = new MenuItem("Export Entries");
+        exportMenuItem.setOnAction(e -> exportEntries(primaryStage));
+
+        MenuItem importMenuItem = new MenuItem("Import Entries");
+        importMenuItem.setOnAction(e -> importEntries(primaryStage));
+
+
         MenuItem exitMenuItem = new MenuItem("Exit");
         exitMenuItem.setOnAction(e -> System.exit(0));
 
-        fileMenu.getItems().addAll(newEntryMenuItem, saveMenuItem, exitMenuItem);
+        fileMenu.getItems().addAll(newEntryMenuItem, saveMenuItem, importMenuItem, exportMenuItem, exitMenuItem);
 
         // Edit Menu
         Menu editMenu = new Menu("Edit");
@@ -81,18 +90,6 @@ public class MainWindow extends Application {
         // Help Menu
         Menu helpMenu = new Menu("Help");
         //Add items to help menu as needed
-
-        // Export and Import menu
-
-        MenuItem exportMenuItem = new MenuItem("Export Entries");
-        exportMenuItem.setOnAction(e -> exportEntries(primaryStage));
-
-        MenuItem importMenuItem = new MenuItem("Import Entries");
-        importMenuItem.setOnAction(e -> importEntries(primaryStage));
-
-        fileMenu.getItems().addAll(exportMenuItem, importMenuItem);
-
-        menuBar.getMenus().add(fileMenu);
 
         menuBar.getMenus().addAll(fileMenu, editMenu, helpMenu);
 
