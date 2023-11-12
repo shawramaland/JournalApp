@@ -25,3 +25,5 @@ I've created a straightforward code resembling a personal journal. It's a person
 
 5/11/2023: Progressed further in refining the edit functionality. Now, selecting an entry to edit brings up a window pre-filled with the entry's existing content and title, streamlining the editing process. Furthermore, I implemented a search feature that allows for quick retrieval of entries through a search bar, enhancing navigation and accessibility.
 
+12/11/2023: Implemented export and import functions to enable users to extract entries from the application. While some issues persist, such as duplication when importing files and a similar problem with deletions (which has been resolved), there is still a need to address the import options.  
+
