@@ -1,13 +1,14 @@
 package com.github.shawramland.services;
 import com.github.shawramland.Entry;
 import com.github.shawramland.utils.PasswordService;
+
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.Scanner;
 import java.util.ArrayList;
@@ -202,6 +203,18 @@ public class DatabaseService {
         }
     }
 
+    public static void deleteEntryById(int entryId) {
+        String sql = "DELETE FROM Entries WHERE id = ?";
+
+        try(Connection conn = DriverManager.getConnection(CONNECTION_STRING);
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, entryId);
+            pstmt.executeUpdate();
+        } catch(SQLException e) {
+            System.out.println("Error deleting entry: " + e.getMessage());
+        }
+    }
+
     public static int getEntryIdByTitle(String title) {
         String sql = "SELECT id FROM Entries WHERE title = ?";
 
@@ -254,15 +267,35 @@ public class DatabaseService {
     }
 
     public static void saveImportedEntries(List<Entry> importedEntries) {
-        String sql = "INSERT INTO Entries(title, content, timestamp) VALUES(?,?,?)";
+        String sqlInsert = "INSERT INTO Entries(title, content, timestamp) VALUES(?,?,?)";
+        String sqlCheck = "SELECT id FROM Entries WHERE title = ? AND content = ? AND timestamp = ?";
+        String sqlUpdate = "UPDATE Entries SET content = ?, timestamp = ? WHERE title = ?";
 
-        try(Connection conn = DriverManager.getConnection(CONNECTION_STRING);
-            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try(Connection conn = DriverManager.getConnection(CONNECTION_STRING)) {
             for(Entry entry : importedEntries) {
-                pstmt.setString(1, entry.getTitle());
-                pstmt.setString(2, entry.getContent());
-                pstmt.setString(3, entry.getTimeStamp());
-                pstmt.executeUpdate();
+                // Check if entry already exists
+                try (PreparedStatement pstmtCheck = conn.prepareStatement(sqlCheck)) {
+                    pstmtCheck.setString(1, entry.getTitle());
+                    ResultSet rs = pstmtCheck.executeQuery();
+                    if(rs.next()) {
+                        // Entry with this title exists, decide to update or skip
+                        // For update:
+                        try (PreparedStatement pstmtUpdate = conn.prepareStatement(sqlUpdate)) {
+                            pstmtUpdate.setString(1, entry.getContent());
+                            pstmtUpdate.setString(2, entry.getTimeStamp());
+                            pstmtUpdate.setString(3, entry.getTitle());
+                            pstmtUpdate.executeUpdate();
+                        }
+                        continue;
+                    }
+                }
+                // Insert a new entry if title does not exist
+                try (PreparedStatement pstmtInsert = conn.prepareStatement(sqlInsert)) {
+                    pstmtInsert.setString(1, entry.getTitle());
+                    pstmtInsert.setString(2, entry.getContent());
+                    pstmtInsert.setString(3, entry.getTimeStamp());
+                    pstmtInsert.executeUpdate();
+                }
             }
         } catch (SQLException e) {
             System.out.println("Error saving imported entries: " + e.getMessage());
@@ -270,16 +303,29 @@ public class DatabaseService {
     }
 
     public static void exportEntriesToFile(File file) throws IOException {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
+        try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(Paths.get(file.getPath())))) {
             List<Entry> entriesToExport = getEntries();
             out.writeObject(entriesToExport);
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static void importEntriesFromFile(File file) throws IOException, ClassNotFoundException {
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
-            List<Entry> importEntries = (List<Entry>) in.readObject();
-            saveImportedEntries(importEntries);
+        try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(Paths.get(file.getPath())))) {
+            Object readObject = in.readObject();
+            if(readObject instanceof List<?>) {
+                List<?> rawList = (List<?>) readObject;
+                if(!rawList.isEmpty() && rawList.get(0) instanceof Entry) {
+                    List<Entry> importedEntries = (List<Entry>) rawList;
+                    saveImportedEntries(importedEntries);
+                } else {
+                    // Handle the case where the list is not of type Entry
+                    throw new ClassNotFoundException("List does not contain Entry objects");
+                }
+            } else {
+                // Handle the case where the object is not a list
+                throw new ClassNotFoundException("Deserialize object is not a list");
+            }
         }
     }
 }

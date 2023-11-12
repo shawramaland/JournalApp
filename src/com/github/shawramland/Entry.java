@@ -2,8 +2,11 @@ package com.github.shawramland;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.io.Serializable;
 
-public class Entry {
+public class Entry implements Serializable {
+
+    private static final long serialVersionUID = 1L;
     final private LocalDateTime timestamp;
     private String title;
     private String content;
@@ -12,7 +15,8 @@ public class Entry {
 
     public Entry(int id, String title, String content, String timestamp) {
         this.id = id;
-        this.timestamp = LocalDateTime.parse(timestamp);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        this.timestamp = LocalDateTime.parse(timestamp, formatter);
         this.title = title;
         this.content = content;
     }

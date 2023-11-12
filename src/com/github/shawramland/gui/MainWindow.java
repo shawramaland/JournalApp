@@ -7,7 +7,6 @@ import javafx.scene.Scene;
 import javafx.stage.FileChooser;
 import java.util.List;
 import javafx.geometry.Insets;
-
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -141,7 +140,8 @@ public class MainWindow extends Application {
     private void deleteEntry() {
         String selectedTitle = entryListView.getSelectionModel().getSelectedItem();
         if(selectedTitle != null) {
-            DatabaseService.deleteEntryByTitle(selectedTitle);
+            int entryId = DatabaseService.getEntryIdByTitle(selectedTitle);
+            DatabaseService.deleteEntryById(entryId);
             refreshListView();
         }
     }
@@ -155,7 +155,17 @@ public class MainWindow extends Application {
     private void exportEntries(Stage primaryStage) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Export Entries");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Journal files", "*.journal"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Journal Files", "*.journal"));
+
+        // Retrieve the selected entry title
+        String selectedTitle = entryListView.getSelectionModel().getSelectedItem();
+        if (selectedTitle != null) {
+            fileChooser.setInitialFileName(selectedTitle + ".journal");
+        } else {
+            // FallBack filename if no entry is selected
+            fileChooser.setInitialFileName("JournalEntries.journal");
+        }
+
         File file = fileChooser.showSaveDialog(primaryStage);
         if(file != null) {
             try {
