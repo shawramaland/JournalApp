@@ -13,10 +13,9 @@ public class Entry implements Serializable {
 
     private int id;
 
-    public Entry(int id, String title, String content, String timestamp) {
+    public Entry(int id, String title, String content, LocalDateTime timestamp) {
         this.id = id;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        this.timestamp = LocalDateTime.parse(timestamp, formatter);
+        this.timestamp = timestamp;
         this.title = title;
         this.content = content;
     }

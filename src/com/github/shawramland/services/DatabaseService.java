@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
@@ -102,7 +103,8 @@ public class DatabaseService {
             pstmt.setInt(1, userId);
             pstmt.setString(2, title);
             pstmt.setString(3, content);
-            pstmt.setString(4, LocalDateTime.now().toString());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            pstmt.setString(4, LocalDateTime.now().format(formatter));
             pstmt.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -114,6 +116,7 @@ public class DatabaseService {
     public static List<Entry> getEntriesForUser(int userId, int limit, int offset) {
         List<Entry> entries = new ArrayList<>();
         String sql = "SELECT title, content, timestamp FROM Entries WHERE userID = ? LIMIT ? OFFSET ?";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         try(Connection conn = DriverManager.getConnection(CONNECTION_STRING);
             PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -128,8 +131,8 @@ public class DatabaseService {
                 int id = rs.getInt("id");
                 String title = rs.getString("title");
                 String content = rs.getString("content");
-                String timestamp = rs.getString("timestamp");
-                System.out.println("Fetched entry " + title + " - " + content);
+                String timestampStr = rs.getString("timestamp");
+                LocalDateTime timestamp = LocalDateTime.parse(timestampStr, formatter);
                 entries.add(new Entry(id,title, content, timestamp));
             }
         } catch(SQLException e) {
@@ -166,7 +169,11 @@ public class DatabaseService {
                 int id = rs.getInt("id");
                 String entryTitle = rs.getString("title");
                 String content = rs.getString("content");
-                String timestamp = rs.getString("timestamp");
+                String timestampStr = rs.getString("timestamp");
+
+                DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+                LocalDateTime timestamp = LocalDateTime.parse(timestampStr, formatter);
+
                 Entry entry = new Entry(id, entryTitle, content, timestamp);
                 entry.setId(id);
                 return entry;
@@ -253,12 +260,14 @@ public class DatabaseService {
     public static List<Entry> getEntries() {
         List<Entry> entries = new ArrayList<>();
         String sql = "SELECT * FROM Entries";
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
         try (Connection conn = DriverManager.getConnection(CONNECTION_STRING);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                entries.add(new Entry(rs.getInt("id"), rs.getString("title"), rs.getString("content"), rs.getString("timestamp")));
+                LocalDateTime timestamp = LocalDateTime.parse(rs.getString("timestamp"), formatter);
+                entries.add(new Entry(rs.getInt("id"), rs.getString("title"), rs.getString("content"), timestamp));
             }
         } catch(SQLException e) {
             System.out.println("Error getting entries: " + e.getMessage());
@@ -269,28 +278,20 @@ public class DatabaseService {
     public static void saveImportedEntries(List<Entry> importedEntries) {
         String sqlInsert = "INSERT INTO Entries(title, content, timestamp) VALUES(?,?,?)";
         String sqlCheck = "SELECT id FROM Entries WHERE title = ? AND content = ? AND timestamp = ?";
-        String sqlUpdate = "UPDATE Entries SET content = ?, timestamp = ? WHERE title = ?";
 
         try(Connection conn = DriverManager.getConnection(CONNECTION_STRING)) {
             for(Entry entry : importedEntries) {
-                // Check if entry already exists
-                try (PreparedStatement pstmtCheck = conn.prepareStatement(sqlCheck)) {
+                // Check if entry already exists by title
+                try(PreparedStatement pstmtCheck = conn.prepareStatement(sqlCheck)) {
                     pstmtCheck.setString(1, entry.getTitle());
                     ResultSet rs = pstmtCheck.executeQuery();
                     if(rs.next()) {
-                        // Entry with this title exists, decide to update or skip
-                        // For update:
-                        try (PreparedStatement pstmtUpdate = conn.prepareStatement(sqlUpdate)) {
-                            pstmtUpdate.setString(1, entry.getContent());
-                            pstmtUpdate.setString(2, entry.getTimeStamp());
-                            pstmtUpdate.setString(3, entry.getTitle());
-                            pstmtUpdate.executeUpdate();
-                        }
-                        continue;
+                        // Entry with this title exists, decide to skip
+                        continue; // Skipping the duplicate entry
                     }
                 }
-                // Insert a new entry if title does not exist
-                try (PreparedStatement pstmtInsert = conn.prepareStatement(sqlInsert)) {
+
+                try(PreparedStatement pstmtInsert = conn.prepareStatement(sqlInsert)) {
                     pstmtInsert.setString(1, entry.getTitle());
                     pstmtInsert.setString(2, entry.getContent());
                     pstmtInsert.setString(3, entry.getTimeStamp());
