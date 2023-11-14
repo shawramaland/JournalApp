@@ -5,6 +5,8 @@ import com.github.shawramland.Entry;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.FileChooser;
+
+import java.util.ArrayList;
 import java.util.List;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -157,22 +159,27 @@ public class MainWindow extends Application {
         fileChooser.setTitle("Export Entries");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Journal Files", "*.journal"));
 
-        // Retrieve the selected entry title
         String selectedTitle = entryListView.getSelectionModel().getSelectedItem();
-        if (selectedTitle != null) {
+        if(selectedTitle != null) {
             fileChooser.setInitialFileName(selectedTitle + ".journal");
-        } else {
-            // FallBack filename if no entry is selected
-            fileChooser.setInitialFileName("JournalEntries.journal");
-        }
 
-        File file = fileChooser.showSaveDialog(primaryStage);
-        if(file != null) {
-            try {
-                DatabaseService.exportEntriesToFile(file);
-            } catch (IOException e) {
-                showAlert("Export Failed", "Could not export entries: " + e.getMessage(), Alert.AlertType.ERROR);
+            File file = fileChooser.showSaveDialog(primaryStage);
+            if(file != null) {
+                try {
+                    // Get the ID of the selected entry
+                    int entryId = DatabaseService.getEntryIdByTitle(selectedTitle);
+                    List<Integer> entryIds = new ArrayList<>();
+                    entryIds.add(entryId);
+
+                    // Pass both file and list of entry IDs
+                    DatabaseService.exportEntriesToFile(file, entryIds);
+                } catch (IOException e) {
+                    showAlert("Export Failed", "Could not export entries: " + e.getMessage(), Alert.AlertType.ERROR);
+                }
             }
+        } else {
+            // Handle the case where no entry is selected
+            showAlert("Export Failed", "No entry selected", Alert.AlertType.ERROR);
         }
     }
 

@@ -277,6 +277,8 @@ public class DatabaseService {
                 // Check if entry already exists by title
                 try(PreparedStatement pstmtCheck = conn.prepareStatement(sqlCheck)) {
                     pstmtCheck.setString(1, entry.getTitle());
+                    pstmtCheck.setString(2, entry.getContent());
+                    pstmtCheck.setString(3, entry.getTimeStamp());
                     ResultSet rs = pstmtCheck.executeQuery();
                     if(rs.next()) {
                         // Entry with this title exists, decide to skip
@@ -296,9 +298,35 @@ public class DatabaseService {
         }
     }
 
-    public static void exportEntriesToFile(File file) throws IOException {
+    public static Entry getEntryById(int entryId) {
+        String sql = "SELECT * FROM Entries WHERE id = ?";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        try(Connection conn = DriverManager.getConnection(CONNECTION_STRING);
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, entryId);
+            ResultSet rs = pstmt.executeQuery();
+
+            if(rs.next()) {
+                LocalDateTime timestamp = LocalDateTime.parse(rs.getString("timestamp"), formatter);
+                return new Entry(rs.getInt("id"), rs.getString("title"), rs.getString("content"), timestamp);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving entry: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public static void exportEntriesToFile(File file, List<Integer> entryIds) throws IOException {
         try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(Paths.get(file.getPath())))) {
-            List<Entry> entriesToExport = getEntries();
+            List<Entry> entriesToExport = new ArrayList<>();
+            for(Integer id : entryIds) {
+                Entry entry = getEntryById(id);
+                if(entry != null) {
+                    entriesToExport.add(entry);
+                }
+            }
             out.writeObject(entriesToExport);
         }
     }
