@@ -158,25 +158,18 @@ public class DatabaseService {
     }
 
     public static Entry getEntryDetails(String title) {
-        String sql = "SELECT id, title, content, timestamp FROM Entries WHERE title = ?";
+        String sql = "SELECT * FROM Entries WHERE title = ?";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         try (Connection conn = DriverManager.getConnection(CONNECTION_STRING);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setString(1, title);
             ResultSet rs = pstmt.executeQuery();
 
             if(rs.next()) {
-                int id = rs.getInt("id");
-                String entryTitle = rs.getString("title");
-                String content = rs.getString("content");
-                String timestampStr = rs.getString("timestamp");
-
-                DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-                LocalDateTime timestamp = LocalDateTime.parse(timestampStr, formatter);
-
-                Entry entry = new Entry(id, entryTitle, content, timestamp);
-                entry.setId(id);
-                return entry;
+                LocalDateTime timestamp = LocalDateTime.parse(rs.getString("timestamp"), formatter);
+                return new Entry(rs.getInt("id"), rs.getString("title"), rs.getString("content"), timestamp);
             }
         } catch (SQLException e) {
             System.out.println("Error retrieving entry details: " + e.getMessage());
@@ -260,7 +253,7 @@ public class DatabaseService {
     public static List<Entry> getEntries() {
         List<Entry> entries = new ArrayList<>();
         String sql = "SELECT * FROM Entries";
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         try (Connection conn = DriverManager.getConnection(CONNECTION_STRING);
              Statement stmt = conn.createStatement();
