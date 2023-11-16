@@ -27,3 +27,5 @@ I've created a straightforward code resembling a personal journal. It's a person
 
 12/11/2023: Implemented export and import functions to enable users to extract entries from the application. While some issues persist, such as duplication when importing files and a similar problem with deletions (which has been resolved), there is still a need to address the import options.  
 
+14/11/2023: After encountering issues with the import and export features, I successfully resolved them. Now, when importing a file with the same title and content, the system will skip it as there is already a matching entry. Additionally, when importing a new file to the application, it will only import the selected file and not add entries that were previously saved within the app
+
