@@ -7,10 +7,12 @@
     -fx-text-fill: #EAE2B7;
     -fx-font-size: 16px;
     -fx-padding: 10px 20px;
+    -fx-border-radius: 5px; /* Adding rounded corners */
 }
 
 .button:hover {
     -fx-background-color: #D62828;
+    -fx-cursor: hand;
 }
 
 .label {
@@ -18,14 +20,12 @@
     -fx-font-size: 14px;
 }
 
-.text-area {
+.text-area, .list-view {
     -fx-background-color: #EAE2B7;
     -fx-text-fill: #003049;
-}
-
-.list-view {
-    -fx-background-color: #EAE2B7;
-    -fx-text-fill: #003049;
+    -fx-border-color: #003049;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
 }
 
 .menu-bar {
@@ -37,11 +37,28 @@
     -fx-text-fill: #EAE2B7;
 }
 
-.menu-item:focused {
+.menu-item:focused, .menu-item:hover {
     -fx-background-color: #F77F00;
 }
 
-.menu-item:hover {
+.scroll-bar {
+    -fx-background-color: #EAE2B7;
+}
+
+.text-filed {
+    -fx-background-color: #EAE2B7;
+    -fx-text-fill: #003049;
+    -fx-border-color: #003049;
+    -fx-border-radius: 5px;
+}
+
+.list-cell:hover {
     -fx-background-color: #F77F00;
+    -fx-text-fill: #EAE2B7;
+}
+
+.list-cell:filled:selected, .list-cell:filled:selected:hover {
+    -fx-background-color: #D62828;
+    -fx-text-fill: #EAE2B7;
 }
 
