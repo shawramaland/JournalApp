@@ -5,6 +5,7 @@ import com.github.shawramland.Entry;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.FileChooser;
+import javafx.scene.web.HTMLEditor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,21 @@ public class MainWindow extends Application {
     private final TextField searchField = new TextField();
     @Override
     public void start(Stage primaryStage) {
+
+        HTMLEditor htmlEditor = new HTMLEditor();
+        htmlEditor.setPrefHeight(245); // Adjusting the height as needed
+
+
+        entryListView.setOnMouseClicked(e -> {
+            String selectedEntryTitle = entryListView.getSelectionModel().getSelectedItem();
+            Entry selectedEntry = DatabaseService.getEntryDetails(selectedEntryTitle);
+
+            if(selectedEntry != null) {
+                // Assuming the content of Entry is now in HTML format
+                htmlEditor.setHtmlText(selectedEntry.getContent());
+            }
+        });
+
         // Main layout pane
         DatabaseService.initializeDatabase();
         BorderPane rootLayout = new BorderPane();
@@ -48,7 +64,7 @@ public class MainWindow extends Application {
         });
 
         SplitPane splitPane = new SplitPane();
-        splitPane.getItems().addAll(entryListView, textArea);
+        splitPane.getItems().addAll(entryListView, textArea, htmlEditor);
 
         rootLayout.setCenter(splitPane);
 
