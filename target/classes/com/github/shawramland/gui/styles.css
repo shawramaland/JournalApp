@@ -20,14 +20,6 @@
     -fx-font-size: 14px;
 }
 
-.text-area, .list-view {
-    -fx-background-color: #EAE2B7;
-    -fx-text-fill: #003049;
-    -fx-border-color: #003049;
-    -fx-border-width: 2px;
-    -fx-border-radius: 5px;
-}
-
 .menu-bar {
     -fx-background-color: #003049;
 }

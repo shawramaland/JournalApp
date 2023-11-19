@@ -7,10 +7,11 @@ import javafx.scene.*;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
 import javafx.geometry.*;
+import javafx.scene.web.HTMLEditor;
 public class NewEntryWindow {
 
     private static TextField titleField;
-    private static TextArea contentField;
+    private static HTMLEditor contentField;
 
     private static Entry currentEditingEntry;
 
@@ -20,7 +21,8 @@ public class NewEntryWindow {
 
         window.initModality(Modality.APPLICATION_MODAL);
         window.setTitle(entryToEdit != null ? "Edit Entry" : "New Entry");
-        window.setMinWidth(250);
+        window.setMinWidth(500); // Adjusted width to accommodate HTMLEditor
+        window.setMinHeight(400); // Adjusted height
 
         Label label = new Label();
         label.setText("Enter your new journal entry below:");
@@ -29,12 +31,10 @@ public class NewEntryWindow {
         titleField = new TextField();
         titleField.setPromptText("Title");
 
-        contentField = new TextArea();
-        contentField.setPromptText("Content");
-
+        contentField = new HTMLEditor();
         if(entryToEdit != null) {
             titleField.setText(entryToEdit.getTitle());
-            contentField.setText(entryToEdit.getContent());
+            contentField.setHtmlText(entryToEdit.getContent());
         }
 
         Button closeButton = new Button("Save and Close");
@@ -58,7 +58,7 @@ public class NewEntryWindow {
     }
     public static void saveEntry() {
         String title = titleField.getText();
-        String content = contentField.getText();
+        String content = contentField.getHtmlText();
 
         if(title.isEmpty() || content.isEmpty()) {
             // Show some error message of being empty

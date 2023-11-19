@@ -4,8 +4,9 @@ import com.github.shawramland.services.DatabaseService;
 import com.github.shawramland.Entry;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.web.WebEngine;
 import javafx.stage.FileChooser;
-import javafx.scene.web.HTMLEditor;
+import javafx.scene.web.WebView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,26 +27,14 @@ public class MainWindow extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        HTMLEditor htmlEditor = new HTMLEditor();
-        htmlEditor.setPrefHeight(245); // Adjusting the height as needed
-
-
-        entryListView.setOnMouseClicked(e -> {
-            String selectedEntryTitle = entryListView.getSelectionModel().getSelectedItem();
-            Entry selectedEntry = DatabaseService.getEntryDetails(selectedEntryTitle);
-
-            if(selectedEntry != null) {
-                // Assuming the content of Entry is now in HTML format
-                htmlEditor.setHtmlText(selectedEntry.getContent());
-            }
-        });
-
         // Main layout pane
         DatabaseService.initializeDatabase();
         BorderPane rootLayout = new BorderPane();
 
-        TextArea textArea = new TextArea();
-        textArea.setEditable(false);
+        WebView webView = new WebView();
+        webView.getStyleClass().add("web-view");
+
+        WebEngine webEngine = webView.getEngine();
 
         // Creating ListView to display Entries
         MainWindow.entryListView = new ListView<>();
@@ -57,14 +46,15 @@ public class MainWindow extends Application {
             Entry selectedEntry = DatabaseService.getEntryDetails(selectedEntryTitle);
 
             if(selectedEntry != null) {
-                textArea.setText("Title" + selectedEntry.getTitle() + "\n\n"
-                                 + "Content: " + selectedEntry.getContent() + "\n\n"
-                                 + "Timestamp: " + selectedEntry.getTimeStamp());
+                String fullContent = "<h1>" + selectedEntry.getTitle() + "</h1>" +
+                                     "<div class='html-content'>" + selectedEntry.getContent() + "</div>" +
+                                     "<p>Timestamp: " + selectedEntry.getTimeStamp() + "</p>";
+                webEngine.loadContent(fullContent);
             }
         });
 
         SplitPane splitPane = new SplitPane();
-        splitPane.getItems().addAll(entryListView, textArea, htmlEditor);
+        splitPane.getItems().addAll(entryListView, webView);
 
         rootLayout.setCenter(splitPane);
 
