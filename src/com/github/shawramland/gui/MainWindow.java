@@ -127,7 +127,7 @@ public class MainWindow extends Application {
         rootLayout.setTop(topContainer);
 
         // Set scene and stage
-        Scene scene = new Scene(rootLayout, 800, 600);
+        Scene scene = new Scene(rootLayout, 1000, 800);
 
         String css = MainWindow.class.getResource("styles.css").toExternalForm();
         scene.getStylesheets().add(css);
