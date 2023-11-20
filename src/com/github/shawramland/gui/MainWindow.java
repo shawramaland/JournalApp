@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.web.WebEngine;
 import javafx.stage.FileChooser;
 import javafx.scene.web.WebView;
+
 import java.net.URL;
 
 import java.util.ArrayList;
@@ -33,8 +34,6 @@ public class MainWindow extends Application {
         BorderPane rootLayout = new BorderPane();
 
         WebView webView = new WebView();
-        webView.getStyleClass().add("web-view");
-
         WebEngine webEngine = webView.getEngine();
 
         // Creating ListView to display Entries
@@ -48,8 +47,8 @@ public class MainWindow extends Application {
 
             if(selectedEntry != null) {
                 String fullContent = "<h1>" + selectedEntry.getTitle() + "</h1>" +
-                                     "<div class='html-content'>" + selectedEntry.getContent() + "</div>" +
-                                     "<p>Timestamp: " + selectedEntry.getTimeStamp() + "</p>";
+                        "<div class='html-content'>" + selectedEntry.getContent() + "</div>" +
+                        "<p>Timestamp: " + selectedEntry.getTimeStamp() + "</p>";
                 webEngine.loadContent(fullContent);
             }
         });
