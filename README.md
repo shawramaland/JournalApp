@@ -29,3 +29,4 @@ I've created a straightforward code resembling a personal journal. It's a person
 
 14/11/2023: After encountering issues with the import and export features, I successfully resolved them. Now, when importing a file with the same title and content, the system will skip it as there is already a matching entry. Additionally, when importing a new file to the application, it will only import the selected file and not add entries that were previously saved within the app
 
+19/11/2023: Implemented a feature in the project by integrating an HTML Editor, replacing the standard TextArea component. This enhancement provides a more user-friendly interface, enabling users to effortlessly add fonts and other formatting options, thereby enhancing the overall usability and aesthetic appeal of the application.
