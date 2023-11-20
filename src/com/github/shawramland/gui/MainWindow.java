@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.web.WebEngine;
 import javafx.stage.FileChooser;
 import javafx.scene.web.WebView;
+import java.net.URL;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -119,8 +120,13 @@ public class MainWindow extends Application {
         // Set scene and stage
         Scene scene = new Scene(rootLayout, 1000, 800);
 
-        String css = MainWindow.class.getResource("styles.css").toExternalForm();
-        scene.getStylesheets().add(css);
+        URL cssURL = MainWindow.class.getResource("styles.css");
+        if(cssURL != null) {
+            String css = cssURL.toExternalForm();
+            scene.getStylesheets().add(css);
+        } else {
+            System.out.println("Could not find CSS file: styles.css");
+        }
 
         primaryStage.setTitle("Journey Journal");
         primaryStage.setScene(scene);
